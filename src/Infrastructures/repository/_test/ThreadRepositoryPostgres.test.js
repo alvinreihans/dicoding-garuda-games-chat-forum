@@ -22,7 +22,7 @@ describe('ThreadRepositoryPostgres', () => {
   describe('addThread function', () => {
     it('should persist add thread', async () => {
       // Arrange
-      const registerThread = new AddThread({
+      const addThreadPayload = new AddThread({
         title: 'sebuah thread',
         body: 'ini adalah sebuah thread',
         owner: 'user-123',
@@ -34,18 +34,18 @@ describe('ThreadRepositoryPostgres', () => {
       );
 
       // Action
-      await threadRepositoryPostgres.addThread(registerThread);
+      await threadRepositoryPostgres.addThread(addThreadPayload);
 
       // Assert
-      const registeredThreads = await ThreadsTableTestHelper.findThreadsById(
+      const foundThreads = await ThreadsTableTestHelper.findThreadsById(
         'thread-123'
       );
-      expect(registeredThreads).toHaveLength(1);
+      expect(foundThreads).toHaveLength(1);
     });
 
     it('should return added thread correctly', async () => {
       // Arrange
-      const addThread = new AddThread({
+      const addThreadPayload = new AddThread({
         title: 'sebuah thread',
         body: 'ini adalah sebuah thread',
         owner: 'user-123',
@@ -57,12 +57,12 @@ describe('ThreadRepositoryPostgres', () => {
       );
 
       // Actions
-      const registeredThreads = await threadRepositoryPostgres.addThread(
-        addThread
+      const addedThread = await threadRepositoryPostgres.addThread(
+        addThreadPayload
       );
 
       // Assert
-      expect(registeredThreads).toStrictEqual(
+      expect(addedThread).toStrictEqual(
         new AddedThread({
           id: 'thread-123',
           title: 'sebuah thread',

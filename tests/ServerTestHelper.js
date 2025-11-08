@@ -1,43 +1,40 @@
+/* istanbul ignore file */
 const ServerTestHelper = {
-  defaultUser: {
-    id: 'user-123',
-    username: 'dicoding',
-    password: 'secret',
-    fullname: 'Dicoding Indonesia',
-  },
-
-  async getAccessToken({ server, username }) {
-    const {
-      password,
-      fullname,
-      username: defaultUsername,
-    } = ServerTestHelper.defaultUser;
-    const finalUsername = username || defaultUsername;
-
-    // Payload untuk registrasi dan login
-    const userPayload = { username: finalUsername, password };
-
-    // ==== 1. Registrasi user baru ====
-    await server.inject({
+  async registerAndLogin({ server, userPayload }) {
+    // ==== 1. Register user ====
+    const registerResponse = await server.inject({
       method: 'POST',
       url: '/users',
-      payload: { ...userPayload, fullname },
+      payload: {
+        username: userPayload.username,
+        password: userPayload.password,
+        fullname: userPayload.fullname,
+      },
     });
 
-    // ==== 2. Login untuk mendapatkan token ====
-    const authResponse = await server.inject({
+    const {
+      data: { addedUser },
+    } = JSON.parse(registerResponse.payload);
+
+    // ==== 2. Login user ====
+    const loginResponse = await server.inject({
       method: 'POST',
       url: '/authentications',
-      payload: userPayload,
+      payload: {
+        username: userPayload.username,
+        password: userPayload.password,
+      },
     });
 
-    // ==== 3. Parsing response JSON ====
     const {
       data: { accessToken },
-    } = JSON.parse(authResponse.payload);
+    } = JSON.parse(loginResponse.payload);
 
-    // ==== 4. Return hasil ====
-    return accessToken;
+    // ==== 3. Return hasil ====
+    return {
+      userId: addedUser.id,
+      accessToken,
+    };
   },
 };
 

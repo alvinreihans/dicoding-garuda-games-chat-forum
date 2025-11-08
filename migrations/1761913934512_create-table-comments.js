@@ -22,7 +22,6 @@ exports.up = (pgm) => {
       references: '"users"',
       onDelete: 'CASCADE',
     },
-
     date: {
       type: 'TEXT',
       notNull: true,

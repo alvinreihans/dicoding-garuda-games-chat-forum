@@ -13,6 +13,12 @@ const container = require('../../container');
 const createServer = require('../createServer');
 
 describe('/threads endpoint', () => {
+  const userPayload = {
+    username: 'dicoding',
+    password: 'secret',
+    fullname: 'Dicoding Indonesia',
+  };
+
   afterEach(async () => {
     await ThreadsTableTestHelper.cleanTable();
     await UsersTableTestHelper.cleanTable();
@@ -25,14 +31,17 @@ describe('/threads endpoint', () => {
   describe('when POST /threads', () => {
     it('should response 201 and persisted thread', async () => {
       // Arrange
+      const server = await createServer(container);
+
+      const { accessToken } = await ServerTestHelper.registerAndLogin({
+        server,
+        userPayload,
+      });
+
       const requestPayload = {
         title: 'sebuah thread',
         body: 'ini adalah sebuah thread',
       };
-
-      const server = await createServer(container);
-
-      const accessToken = await ServerTestHelper.getAccessToken({ server });
 
       // Action
       const response = await server.inject({
@@ -53,13 +62,16 @@ describe('/threads endpoint', () => {
 
     it('should response 400 when request payload not contain needed property', async () => {
       // Arrange
+      const server = await createServer(container);
+
+      const { accessToken } = await ServerTestHelper.registerAndLogin({
+        server,
+        userPayload,
+      });
+
       const requestPayload = {
         title: 'sebuah thread',
       };
-
-      const server = await createServer(container);
-
-      const accessToken = await ServerTestHelper.getAccessToken({ server });
 
       // Action
       const response = await server.inject({
@@ -80,14 +92,17 @@ describe('/threads endpoint', () => {
 
     it('should response 400 when request payload not meet data type specification', async () => {
       // Arrange
+      const server = await createServer(container);
+
+      const { accessToken } = await ServerTestHelper.registerAndLogin({
+        server,
+        userPayload,
+      });
+
       const requestPayload = {
         title: 123,
         body: [],
       };
-
-      const server = await createServer(container);
-
-      const accessToken = await ServerTestHelper.getAccessToken({ server });
 
       // Action
       const response = await server.inject({
@@ -110,12 +125,12 @@ describe('/threads endpoint', () => {
 
     it('should response 401 when request request does not have authentication', async () => {
       // Arrange
+      const server = await createServer(container);
+
       const requestPayload = {
         title: 'sebuah thread',
         body: 'ini adalah sebuah thread',
       };
-
-      const server = await createServer(container);
 
       // Action
       const response = await server.inject({
