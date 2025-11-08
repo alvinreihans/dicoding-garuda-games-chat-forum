@@ -36,6 +36,26 @@ const ServerTestHelper = {
       accessToken,
     };
   },
+
+  async addThread({ server, threadPayload, accessToken }) {
+    // ==== 1. tambahkan thread baru ====
+    const addThreadResponse = await server.inject({
+      method: 'POST',
+      url: '/threads',
+      payload: threadPayload,
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+
+    // ==== 2. Parsing response JSON ====
+    const {
+      data: { addedThread },
+    } = JSON.parse(addThreadResponse.payload);
+
+    // ==== 3. Return hasil ====
+    return addedThread;
+  },
 };
 
 // ==== Export ====

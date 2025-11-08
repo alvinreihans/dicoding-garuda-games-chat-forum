@@ -48,6 +48,14 @@ DomainErrorTranslator._directories = {
   'ADD_THREAD.NOT_MEET_DATA_TYPE_SPECIFICATION': new InvariantError(
     'tipe data pada properti thread tidak sesuai'
   ),
+
+  // Add Comment Use Case
+  'ADD_COMMENT.NOT_CONTAIN_NEEDED_PROPERTY': new InvariantError(
+    'properti comment tidak lengkap'
+  ),
+  'ADD_COMMENT.NOT_MEET_DATA_TYPE_SPECIFICATION': new InvariantError(
+    'tipe data pada properti comment tidak sesuai'
+  ),
 };
 
 module.exports = DomainErrorTranslator;
