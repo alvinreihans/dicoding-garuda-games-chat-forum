@@ -104,123 +104,123 @@ describe('/threads endpoint', () => {
       expect(responseJson.status).toEqual('fail');
       expect(responseJson.message).toEqual('Thread tidak ditemukan');
     });
-  });
 
-  it('should response 400 when request payload not contain needed property', async () => {
-    // Arrange
-    const server = await createServer(container);
+    it('should response 400 when request payload not contain needed property', async () => {
+      // Arrange
+      const server = await createServer(container);
 
-    const { accessToken } = await ServerTestHelper.registerAndLogin({
-      server,
-      userPayload,
+      const { accessToken } = await ServerTestHelper.registerAndLogin({
+        server,
+        userPayload,
+      });
+
+      const addedThread = await ServerTestHelper.addThread({
+        server,
+        threadPayload: {
+          title: threadPayload.title,
+          body: threadPayload.body,
+        },
+        accessToken,
+      });
+
+      const requestPayload = {
+        content: '',
+      };
+
+      // Action
+      const response = await server.inject({
+        method: 'POST',
+        url: `/threads/${addedThread.id}/comments`,
+        payload: requestPayload,
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+
+      // Assert
+      const responseJson = JSON.parse(response.payload);
+      expect(response.statusCode).toEqual(400);
+      expect(responseJson.status).toEqual('fail');
+      expect(responseJson.message).toEqual(
+        'tidak dapat menambahkan komentar karena properti yang dibutuhkan tidak ada'
+      );
     });
 
-    const addedThread = await ServerTestHelper.addThread({
-      server,
-      threadPayload: {
-        title: threadPayload.title,
-        body: threadPayload.body,
-      },
-      accessToken,
+    it('should response 400 when request payload not meet data type specification', async () => {
+      // Arrange
+      const server = await createServer(container);
+
+      const { accessToken } = await ServerTestHelper.registerAndLogin({
+        server,
+        userPayload,
+      });
+
+      const addedThread = await ServerTestHelper.addThread({
+        server,
+        threadPayload: {
+          title: threadPayload.title,
+          body: threadPayload.body,
+        },
+        accessToken,
+      });
+
+      const requestPayload = {
+        content: 123,
+      };
+
+      // Action
+      const response = await server.inject({
+        method: 'POST',
+        url: `/threads/${addedThread.id}/comments`,
+        payload: requestPayload,
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+
+      // Assert
+      const responseJson = JSON.parse(response.payload);
+      expect(response.statusCode).toEqual(400);
+      expect(responseJson.status).toEqual('fail');
+      expect(responseJson.message).toEqual(
+        'tidak dapat menambahkan komentar karena tipe data tidak sesuai'
+      );
     });
 
-    const requestPayload = {
-      content: '',
-    };
+    it('should response 401 when request request does not have authentication', async () => {
+      // Arrange
+      const server = await createServer(container);
 
-    // Action
-    const response = await server.inject({
-      method: 'POST',
-      url: `/threads/${addedThread.id}/comments`,
-      payload: requestPayload,
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
+      const { accessToken } = await ServerTestHelper.registerAndLogin({
+        server,
+        userPayload,
+      });
+
+      const addedThread = await ServerTestHelper.addThread({
+        server,
+        threadPayload: {
+          title: threadPayload.title,
+          body: threadPayload.body,
+        },
+        accessToken,
+      });
+
+      const requestPayload = {
+        content: 123,
+      };
+
+      // Action
+      const response = await server.inject({
+        method: 'POST',
+        url: `/threads/${addedThread.id}/comments`,
+        payload: requestPayload,
+      });
+
+      // Assert
+      const responseJson = JSON.parse(response.payload);
+      expect(response.statusCode).toEqual(401);
+      expect(responseJson.error).toEqual('Unauthorized');
+      expect(responseJson.message).toEqual('Missing authentication');
     });
-
-    // Assert
-    const responseJson = JSON.parse(response.payload);
-    expect(response.statusCode).toEqual(400);
-    expect(responseJson.status).toEqual('fail');
-    expect(responseJson.message).toEqual(
-      'tidak dapat menambahkan komentar karena properti yang dibutuhkan tidak ada'
-    );
-  });
-
-  it('should response 400 when request payload not meet data type specification', async () => {
-    // Arrange
-    const server = await createServer(container);
-
-    const { accessToken } = await ServerTestHelper.registerAndLogin({
-      server,
-      userPayload,
-    });
-
-    const addedThread = await ServerTestHelper.addThread({
-      server,
-      threadPayload: {
-        title: threadPayload.title,
-        body: threadPayload.body,
-      },
-      accessToken,
-    });
-
-    const requestPayload = {
-      content: 123,
-    };
-
-    // Action
-    const response = await server.inject({
-      method: 'POST',
-      url: `/threads/${addedThread.id}/comments`,
-      payload: requestPayload,
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
-    });
-
-    // Assert
-    const responseJson = JSON.parse(response.payload);
-    expect(response.statusCode).toEqual(400);
-    expect(responseJson.status).toEqual('fail');
-    expect(responseJson.message).toEqual(
-      'tidak dapat menambahkan komentar karena tipe data tidak sesuai'
-    );
-  });
-
-  it('should response 401 when request request does not have authentication', async () => {
-    // Arrange
-    const server = await createServer(container);
-
-    const { accessToken } = await ServerTestHelper.registerAndLogin({
-      server,
-      userPayload,
-    });
-
-    const addedThread = await ServerTestHelper.addThread({
-      server,
-      threadPayload: {
-        title: threadPayload.title,
-        body: threadPayload.body,
-      },
-      accessToken,
-    });
-
-    const requestPayload = {
-      content: 123,
-    };
-
-    // Action
-    const response = await server.inject({
-      method: 'POST',
-      url: `/threads/${addedThread.id}/comments`,
-      payload: requestPayload,
-    });
-
-    // Assert
-    const responseJson = JSON.parse(response.payload);
-    expect(response.statusCode).toEqual(401);
-    expect(responseJson.error).toEqual('Unauthorized');
-    expect(responseJson.message).toEqual('Missing authentication');
   });
 });
