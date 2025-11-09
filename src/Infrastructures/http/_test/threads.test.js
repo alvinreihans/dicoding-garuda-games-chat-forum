@@ -87,7 +87,9 @@ describe('/threads endpoint', () => {
       const responseJson = JSON.parse(response.payload);
       expect(response.statusCode).toEqual(400);
       expect(responseJson.status).toEqual('fail');
-      expect(responseJson.message).toEqual('properti thread tidak lengkap');
+      expect(responseJson.message).toEqual(
+        'tidak dapat membuat thread karena properti yang dibutuhkan tidak lengkap'
+      );
     });
 
     it('should response 400 when request payload not meet data type specification', async () => {
@@ -119,7 +121,7 @@ describe('/threads endpoint', () => {
       expect(response.statusCode).toEqual(400);
       expect(responseJson.status).toEqual('fail');
       expect(responseJson.message).toEqual(
-        'tipe data pada properti thread tidak sesuai'
+        'tidak dapat membuat thread karena tipe data tidak sesuai'
       );
     });
 

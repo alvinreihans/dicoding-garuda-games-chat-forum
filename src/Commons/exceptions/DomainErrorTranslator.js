@@ -43,18 +43,18 @@ DomainErrorTranslator._directories = {
 
   // Add Thread Use Case
   'ADD_THREAD.NOT_CONTAIN_NEEDED_PROPERTY': new InvariantError(
-    'properti thread tidak lengkap'
+    'tidak dapat membuat thread karena properti yang dibutuhkan tidak lengkap'
   ),
   'ADD_THREAD.NOT_MEET_DATA_TYPE_SPECIFICATION': new InvariantError(
-    'tipe data pada properti thread tidak sesuai'
+    'tidak dapat membuat thread karena tipe data tidak sesuai'
   ),
 
   // Add Comment Use Case
   'ADD_COMMENT.NOT_CONTAIN_NEEDED_PROPERTY': new InvariantError(
-    'properti comment tidak lengkap'
+    'tidak dapat menambahkan komentar karena properti yang dibutuhkan tidak ada'
   ),
   'ADD_COMMENT.NOT_MEET_DATA_TYPE_SPECIFICATION': new InvariantError(
-    'tipe data pada properti comment tidak sesuai'
+    'tidak dapat menambahkan komentar karena tipe data tidak sesuai'
   ),
 };
 
