@@ -56,6 +56,26 @@ const ServerTestHelper = {
     // ==== 3. Return hasil ====
     return addedThread;
   },
+
+  async addComment({ server, commentPayload, threadId, accessToken }) {
+    // ==== 1. tambahkan thread baru ====
+    const addCommentResponse = await server.inject({
+      method: 'POST',
+      url: `/threads/${threadId}/comments`,
+      payload: commentPayload,
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+
+    // ==== 2. Parsing response JSON ====
+    const {
+      data: { addedComment },
+    } = JSON.parse(addCommentResponse.payload);
+
+    // ==== 3. Return hasil ====
+    return addedComment;
+  },
 };
 
 // ==== Export ====
