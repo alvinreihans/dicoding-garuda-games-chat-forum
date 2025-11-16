@@ -1,5 +1,4 @@
 // Exceptions
-const InvariantError = require('../../Commons/exceptions/InvariantError');
 const NotFoundError = require('../../Commons/exceptions/NotFoundError');
 const AuthorizationError = require('../../Commons/exceptions/AuthorizationError');
 // Domain

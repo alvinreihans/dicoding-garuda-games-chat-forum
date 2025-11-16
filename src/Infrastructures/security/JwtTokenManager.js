@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 const AuthenticationTokenManager = require('../../Applications/security/AuthenticationTokenManager');
 const InvariantError = require('../../Commons/exceptions/InvariantError');
 

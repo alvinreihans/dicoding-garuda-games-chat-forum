@@ -1,5 +1,4 @@
 // Exceptions
-const InvariantError = require('../../Commons/exceptions/InvariantError');
 const NotFoundError = require('../../Commons/exceptions/NotFoundError');
 // Domain
 const AddedThread = require('../../Domains/threads/entities/AddedThread');
