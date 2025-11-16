@@ -73,6 +73,11 @@ describe('/threads endpoint', () => {
       expect(response.statusCode).toEqual(201);
       expect(responseJson.status).toEqual('success');
       expect(responseJson.data.addedComment).toBeDefined();
+
+      const { addedComment } = responseJson.data;
+      expect(addedComment.content).toEqual(requestPayload.content);
+      expect(addedComment.id).toBeDefined();
+      expect(addedComment.owner).toBeDefined();
     });
 
     it('should response 404 when commented thread is not valid', async () => {

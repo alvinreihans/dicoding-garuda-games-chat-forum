@@ -122,6 +122,46 @@ describe('DomainErrorTranslator', () => {
         'tidak dapat menambahkan komentar karena tipe data tidak sesuai'
       )
     );
+
+    // Get Thread
+    expect(
+      DomainErrorTranslator.translate(
+        new Error('GET_THREAD.NOT_CONTAIN_NEEDED_PROPERTY')
+      )
+    ).toStrictEqual(
+      new InvariantError(
+        'tidak dapat mendapatkan thread karena properti yang dibutuhkan tidak ada'
+      )
+    );
+    expect(
+      DomainErrorTranslator.translate(
+        new Error('GET_THREAD.NOT_MEET_DATA_TYPE_SPECIFICATION')
+      )
+    ).toStrictEqual(
+      new InvariantError(
+        'tidak dapat mendapatkan thread karena tipe data tidak sesuai'
+      )
+    );
+
+    // Get Comment
+    expect(
+      DomainErrorTranslator.translate(
+        new Error('GET_COMMENT.NOT_CONTAIN_NEEDED_PROPERTY')
+      )
+    ).toStrictEqual(
+      new InvariantError(
+        'tidak dapat mendapatkan komentar karena properti yang dibutuhkan tidak ada'
+      )
+    );
+    expect(
+      DomainErrorTranslator.translate(
+        new Error('GET_COMMENT.NOT_MEET_DATA_TYPE_SPECIFICATION')
+      )
+    ).toStrictEqual(
+      new InvariantError(
+        'tidak dapat mendapatkan komentar karena tipe data tidak sesuai'
+      )
+    );
   });
 
   it('should return original error when error message is not needed to translate', () => {
