@@ -8,6 +8,23 @@ describe('HTTP server', () => {
     // Action
     const response = await server.inject({
       method: 'GET',
+      url: '/',
+    });
+
+    // Assert
+    const responseJson = JSON.parse(response.payload);
+    expect(response.statusCode).toEqual(200);
+    expect(responseJson.status).toEqual('success');
+    expect(responseJson.message).toEqual('API online');
+  });
+
+  it('should response 404 when request unregistered route', async () => {
+    // Arrange
+    const server = await createServer({});
+
+    // Action
+    const response = await server.inject({
+      method: 'GET',
       url: '/unregisteredRoute',
     });
 
