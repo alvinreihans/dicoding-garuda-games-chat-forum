@@ -1,58 +1,68 @@
-name: Continuous Integration
+name: CI Forum API
 
 on:
   pull_request:
-    branches:
-      - main
+    branches: [main]
 
 jobs:
   test:
     runs-on: ubuntu-latest
 
-    # 1. Konfigurasi Service Container PostgreSQL (Database Test Temporer)
     services:
       postgres:
-        image: postgres:14
+        image: postgres:15
         env:
-          POSTGRES_USER: ci_user_test
-          POSTGRES_PASSWORD: ci_password_test
-          POSTGRES_DB: forumapi_test_ci
+          POSTGRES_USER: developer
+          POSTGRES_PASSWORD: Password123
+          POSTGRES_DB: forumapi_test
         ports:
           - 5432:5432
         options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
+          --health-cmd="pg_isready -U developer"
+          --health-interval=5s
+          --health-timeout=5s
+          --health-retries=5
 
     steps:
-      - uses: actions/checkout@v4
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Setup Node
+        uses: actions/setup-node@v3
         with:
-          node-version: 16.x
+          node-version: 22
+
       - name: Install dependencies
         run: npm install
 
-      # 2. Menjalankan Migrasi (Membuat Tabel)
-      - name: Run Database Migrations
-        run: node-pg-migrate up
-        env:
-          PGHOST: localhost
-          PGUSER: ci_user_test
-          PGPASSWORD: ci_password_test
-          PGDATABASE: forumapi_test_ci
-          PGPORT: 5432
+      - name: Wait for PostgreSQL
+        run: |
+          until pg_isready -h localhost -p 5432 -U developer; do
+            echo "Waiting for postgres..."
+            sleep 2
+          done
 
-      # 3. Menjalankan Semua Pengujian
-      - name: Run Tests
-        run: npm test
+      - name: Generate test config for migration
+        run: |
+          mkdir -p config/database
+          cat <<EOF > config/database/test.json
+          {
+            "user": "developer",
+            "password": "Password123",
+            "host": "localhost",
+            "port": 5432,
+            "database": "forumapi_test"
+          }
+          EOF
+
+      - name: Run test migration
+        run: npm run migrate:test
+
+      - name: Run tests
         env:
           PGHOST_TEST: localhost
-          PGUSER_TEST: ci_user_test
-          PGPASSWORD_TEST: ci_password_test
-          PGDATABASE_TEST: forumapi_test_ci
+          PGUSER_TEST: developer
+          PGPASSWORD_TEST: Password123
+          PGDATABASE_TEST: forumapi_test
           PGPORT_TEST: 5432
-          NODE_ENV: test
-          ACCESS_TOKEN_KEY: secret
-          REFRESH_TOKEN_KEY: terces
+        run: npm test
