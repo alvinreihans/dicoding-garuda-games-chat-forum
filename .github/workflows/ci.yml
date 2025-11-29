@@ -14,7 +14,6 @@ jobs:
       postgres:
         image: postgres:14
         env:
-          # Kredensial ini akan digunakan untuk koneksi DB Service Container
           POSTGRES_USER: ci_user_test
           POSTGRES_PASSWORD: ci_password_test
           POSTGRES_DB: forumapi_test_ci
@@ -31,17 +30,14 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 16.x # Gunakan versi Node.js yang kompatibel dengan project Anda
-
+          node-version: 16.x
       - name: Install dependencies
         run: npm install
 
       # 2. Menjalankan Migrasi (Membuat Tabel)
-      # Walaupun script migrate:test menunjuk ke file, kita override credentials dengan ENV standar.
       - name: Run Database Migrations
-        run: npm run migrate:test up
+        run: node-pg-migrate up
         env:
-          # Kredensial STANDAR (PGHOST, PGDATABASE, dll.) untuk node-pg-migrate
           PGHOST: localhost
           PGUSER: ci_user_test
           PGPASSWORD: ci_password_test
@@ -52,14 +48,11 @@ jobs:
       - name: Run Tests
         run: npm test
         env:
-          # Kredensial TEST (PGHOST_TEST, dll.) untuk pool.js saat NODE_ENV=test
           PGHOST_TEST: localhost
           PGUSER_TEST: ci_user_test
           PGPASSWORD_TEST: ci_password_test
           PGDATABASE_TEST: forumapi_test_ci
           PGPORT_TEST: 5432
           NODE_ENV: test
-
-          # Token Key harus diset untuk Functional Test
           ACCESS_TOKEN_KEY: secret
           REFRESH_TOKEN_KEY: terces
