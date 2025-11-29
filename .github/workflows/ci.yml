@@ -56,7 +56,7 @@ jobs:
           EOF
 
       - name: Run test migration
-        run: npm run migrate:test
+        run: npm run migrate:test -- up
 
       - name: Run tests
         env:
